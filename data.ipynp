@@ -1,0 +1,23 @@
+import numpy as np
+import pandas as pd
+
+data = {
+    "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "name": ["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown", "Eve White", "Frank Black", "Charlie Green", "Daisy Blue", "George Red", "Hannah White"],
+    "birthdate": ["1987-05-24", "1992-08-17", "April 4 1985", "03/12/1990", "1995-07-30", None, "1991-09-05", "August 14 1990", "01-12-1983", "1984/05/06"],
+    "purchase_date": ["2021/12/01", "12-15-2021", "2020-05-21", "21 May 2020", "2022-01-03", "2020-07-15", "Not Available", "14-08-2021", "01/12/21", "15/Dec/2021"],
+    "amount_paid": ["$1 234.56", "USD 999.99", "Â£750", "1300â‚¬", "â‚¹800", "1500", "45.67 USD", "$2 0.5", "1750 CAD", "Â¥200000"],
+    "email": ["john.doe@example.com", "jane.smith#example.com", "alice@example.co.uk", "bob.brown at example.com", "eve.white@example.com", "frank@example.com", "charlie.green@example.com", "daisy.blue[at]example.com", "george.red@example.com", "hannah.white@example.com"]
+}
+
+df = pd.DataFrame(data)
+def clean_amount(amount):
+    if pd.isna(amount):
+        return np.nan
+    clean = ''.join(char for char in amount if char.isdigit() or char == '.' or char == ',' or char == '¹')  # Ajouter '¹' aux caractères acceptés
+    return float(clean.replace(',', '').replace('¹', ''))  # Retirer les caractères spéciaux '¹'
+
+df['birthdate'] = pd.to_datetime(df['birthdate'], errors='coerce')
+df['purchase_date'] = pd.to_datetime(df['purchase_date'], errors='coerce')
+df['amount_paid'] = df['amount_paid'].apply(clean_amount)
+print(df)
